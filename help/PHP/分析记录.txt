@@ -1,0 +1,28 @@
+set_error_handler 句柄捕获不到 致命错误 register_shutdown_function 是在脚本停止 执行 也不能返回控制致命错误
+
+解析url
+dump('QUERY_STRING：'.$_SERVER['QUERY_STRING']);
+dump('REQUEST_URI：'.$_SERVER['REQUEST_URI']);
+dump('SCRIPT_FILENAME：'.$_SERVER['SCRIPT_FILENAME']);
+dump('SCRIPT_NAME：'.$_SERVER['SCRIPT_NAME']);
+dump('DOCUMENT_ROOT：'.$_SERVER['DOCUMENT_ROOT']);
+dump('HTTP_HOST：'.$_SERVER['HTTP_HOST']);
+dump('SERVER_NAME：'.$_SERVER['SERVER_NAME']);
+dump('PHP_SELF：'.$_SERVER['PHP_SELF']);
+
+PHP中$_SERVER['SERVER_NAME']与$_SERVER['HTTP_HOST']异同 相同时满足以下三个条件：
+1.服务器端口默认80
+2.apache或nginx中ServerName设置正确
+3.HTTP/1.1协议规范
+
+不同点:
+$_SERVER['HTTP_HOST']会根据客户端ＨＴＴＰ请求输出信息
+$_SERVER['SERVER_NANE']会根据apache或nginx的配置文件中的ServerName值
+
+当端口不为80时
+$_SERVER['HTTP_HOST']输出中会带有端口号
+$_SERVER['SERVER_NAME']只会直接输出ServerName的值
+
+所以，应尽量使用$_SERVER["HTTP_HOST"]
+
+

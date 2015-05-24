@@ -1,0 +1,126 @@
+dos 命令下启动mysql net start 加mysql服务名字
+安装 mysql目录后 因为别的原因把mysql目录 剪切到别的文件 需要从新修改 注册表 更改服务默认志向执行文件路径 
+
+运行regedit.exe 在这个位置［HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services］ 找到相对的服务，修改ImagePath值为你的路径。
+若碰到1067 意外终止 请查看mysql.ini 配置文件是否正确 
+
+windows 下删除没用的服务
+
+办法一： 用sc.exe这个Windows命令
+
+开始--运行--cmd.exe,然后输入sc就可以看到了。使用办法很简单：
+
+sc delete “服务名” (如果服务名中间有空格，就需要前后加引号)
+
+如针对上面的： sc delete KSD2Service (这个方法我已经试过了可以的)
+
+方法二：直接进行注册表编辑(不推荐)
+
+打开注册表编辑器，找到下面的键值：
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services 一般服务会以相同的名字在这里显示一个主健，直接删除相关的键值便可。
+
+三、特殊情况
+
+1、如果服务显示的是rundll32.exe,并且这个文件是位于system32目录下，那么就不能删除这个rundll32.exe文件，它是Windows系统的文件。这时只要清除相关的服务就可以了
+
+2、如果一个服务删除了马上又自动建立了，说明后台有进程在监视、保护。需要先在进程管理器中杀掉相应的进程，或者启动后按F8,到安全模式下删除。
+
+mysql 导出数据库 
+
+mysql -uroot -p密码 -h主机 数据库 > 路径/文件名字;
+
+mysql 导入数据库 
+
+mysql -uroot -p密码 -h主机 数据库 < 路径/名字
+
+若为空密码  mysql --no-defaults -uroot -p密码 -h主机 数据库 > 路径/文件名字;
+
+mysql 修改密码 mysql -uroot -p旧密码 -password 新密码 
+若密码为空可以省略 -p 选项 mysql -uroot  -password 新密码
+
+Mysql中判断一个字段是否为NUll 不能直接用 reason=NULL 要用 reason is NULL  来判断
+
+mysql server has gone away 解决办法
+
+执行一个sql 但是sql语句过大或者语句中含有BLOB 或者longblob字段 图片数据的处理
+修改mysql配置文件 my.ini 中 max_allowed_packet 值的大小 max_allowed_packet 用来控制其通信缓冲区的最大长度 设置wait-timeout 
+
+在mysql 命令行 使用 show status 查看服务器的一些状态变量 
+show processlist 命令查看mysql 在进行的线程数
+
+show status like "Com_select"; 执行查询语句的次数
+show status like "Com_insert"; 执行插入语句的次数
+以此类推
+
+show status like "%Connections" 试图连接mysql服务器的次数
+show status llke "%Uptime" 服务器工作时间
+show status like "%Slow_queries" 慢查询的次数
+show status like "%Handler_read_key" 值 很高 代表了一个行被索引值读的次数  Handler_read_rnd_next 值高 则意味着查询运行低效
+
+查看表结构命令 desc 表名
+show create table 表名 
+
+分析表
+
+analyze table 用于分析和存储表的关键字分布
+check table 检查一个表或多个表是否有错误  也可以检查视图是否错误 比如在视图定义中被引用的表已不存在
+
+优化表
+optimize table 
+
+大批量插入数据 提高导入效率
+
+对于 myisam类型表
+ALTER TABLE tb_name DISABLE KEYS 暂停索引更新 
+loading the data 
+ALTER TABLE tb_name ENABLE  KEYS 开启索引更新
+
+对于Innodb类型表
+a.
+因为 Innodb 类型的表是按照主键的顺序保存的，所以将导入的数据按照主键的顺
+序排列，可以有效的提高导入数据的效率。如果 Innodb 表没有主键，那么系统会默认
+创建一个内部列作为主键，所以如果可以给表创建一个主键，将可以利用这个优势提高
+导入数据的效率。
+b.
+在导入数据前执行 SET UNIQUE_CHECKS=0，关闭唯一性校验，在导入结束后执行 SET
+UNIQUE_CHECKS=1，恢复唯一性校验，可以提高导入的效率。
+c.
+如果应用使用自动提交的方式，建议在导入前执行 SET AUTOCOMMIT=0，关闭自动
+提交，导入结束后再执行 SET AUTOCOMMIT=1，打开自动提交，也可以提高导入的效率。
+
+优化Insert语句 
+多值表的insert 语句 比使用分开insert语句快几倍
+
+insert delayed 
+
+将索引文件和数据文件分在不同的磁盘上存放
+
+如果进行批量插入 可以增加 bulk_insert_buffer_size 变量值的方法来提高速度 只对myisam表使用
+
+load_data_infile replace 代替 insert ignore 关键字
+
+sql_buffer_result
+
+优化表的数据类型
+
+select * from tb_name PROCEDURE ANALYSE();
+
+获取锁等待情况
+show status like "Table%"; 分析系统上表锁定争夺
+
+show status like "innodb_row_lock%"; 分析系统上的行锁的争夺
+
+优化 Mysql Server 
+mysqld --verbose --help
+查看服务器参数实际值
+SHOW VARIABLES 
+
+影响Mysql 性能的重要参数
+
+key_buffer_size 键缓存 的设置 只适用于myisam的存储引擎
+
+insert into mysql.user(Host,User,Password) values('localhost','admin',password('123456'));    #新建账户admin，密码123456
+flush privileges;    #刷新系统授权表
+grant all on mydata.* to 'admin'@'%' identified by '123456' with grant option;    #允许账户admin从任何主机连接到数据库mydata
+至此，账号admin对数据库mydata具有完全管理权限。

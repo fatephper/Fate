@@ -1,0 +1,9 @@
+cd /Date/logs/
+
+ls call2013/0701*.gz > cp.list
+
+for $file in `cat cp.list`
+do 
+		cp $file ./2013/shizongguang/
+		
+done

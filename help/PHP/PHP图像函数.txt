@@ -1,0 +1,15 @@
+imagecreatetruecolor(100,100) 创建100x100的画布
+imagedestroy($resource) 释放图片句柄
+$white = imagecolorallocate($resource,0xff,0xff,0xff);为画布提供染料盒 提供一种颜色
+imagefill($resource,0,0,$white); 为画布背景填充颜色
+header("Content-type:image/png");
+imagepng($image);向浏览器输出图片
+imagecreatefromjpeg($filename) 从jpeg文件或url新建一图像
+imagecreatefrompng()
+imagecreatefromgif
+imagecreatefrowbmp
+imagesx($resource); 输出画布的宽度
+imagesy($resource); 输出画布的高度
+imagefilledrectangle() 绘制一个矩形
+imagecopyresampled() 复制源图像到目标图像
+getimagesize() 返回一个数组 0 宽度 1 高度 2 图片类型

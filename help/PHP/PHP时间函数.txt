@@ -1,0 +1,140 @@
+checkdate() 验证日期。  正确返回true  错误返回false  
+date_default_timezone_get() 返回默认时区。  
+date_default_timezone_set() 设置默认时区。  
+date_sunrise() 返回给定的日期与地点的日出时间。  
+date_sunset() 返回给定的日期与地点的日落时间。  
+date() 格式化本地时间／日期。  
+getdate() 返回日期／时间信息。  
+gettimeofday() 返回当前时间信息。  
+gmdate() 格式化 GMT/UTC 日期/时间。  
+gmmktime() 取得 GMT 日期的 UNIX 时间戳。 
+gmstrftime() 根据本地区域设置格式化 GMT/UTC 时间／日期。  
+idate() 将本地时间/日期格式化为整数  
+localtime() 返回本地时间。  
+microtime() 返回当前时间的微秒数。  
+mktime() 返回一个日期的 Unix 时间戳。 
+strftime() 根据区域设置格式化本地时间／日期。  
+strptime() 解析由 strftime 生成的日期／时间。  
+strtotime() 将任何英文文本的日期或时间描述解析为 Unix 时间戳。 
+time() 返回当前时间的 Unix 时间戳。
+
+日期/时间函数的行为受到 php.ini 中设置的影响。
+
+Date/Time 配置选项：
+
+名称 默认 描述 可改变 
+date.default_latitude  "31.7667" 规定默认纬度（从 PHP 5 开始可用）。date_sunrise() 和 date_sunset() 使用该选项。 PHP_INI_ALL 
+date.default_longitude "35.2333" 规定默认经度（从 PHP 5 开始可用）。date_sunrise() 和 date_sunset() 使用该选项。 PHP_INI_ALL 
+date.sunrise_zenith "90.83" 规定日出天顶（从 PHP 5 开始可用）。date_sunrise() 和 date_sunset() 使用该选项。 PHP_INI_ALL 
+date.sunset_zenith "90.83" 规定日落天顶（从 PHP 5 开始可用）。date_sunrise() 和 date_sunset() 使用该选项。 PHP_INI_ALL 
+date.timezone "" 规定默认时区（从 PHP 5.1 开始可用）。 PHP_INI_ALL 
+
+
+1.dete_default_timezone_get() 默认查询顺序
+
+2.用 date_default_timezone_set() 函数设定的时区（如果设定了的话） 
+TZ 环境变量（如果非空） 
+date.timezone 配置选项（如果设定了的话） 
+自己推测（如果操作系统支持） 
+如果以上选择都不成功，则返回 UTC 
+
+3.date() 函数格式化一个本地时间/日期
+dete(format,timestamp)
+
+第一个参数的格式分别表示: 
+a - "am" 或是 "pm"  
+A - "AM" 或是 "PM"  
+d - 几日，二位数字，若不足二位则前面补零; 如: "01" 至 "31"  
+D - 星期几，三个英文字母; 如: "Fri"  
+F - 月份，英文全名; 如: "January"  
+h - 12 小时制的小时; 如: "01" 至 "12"  
+H - 24 小时制的小时; 如: "00" 至 "23"  
+g - 12 小时制的小时，不足二位不补零; 如: "1" 至 12"  
+G - 24 小时制的小时，不足二位不补零; 如: "0" 至 "23"  
+i - 分钟; 如: "00" 至 "59"  
+j - 几日，二位数字，若不足二位不补零; 如: "1" 至 "31"  
+l - 星期几，英文全名; 如: "Friday"  
+m - 月份，二位数字，若不足二位则在前面补零; 如: "01" 至 "12"  
+n - 月份，二位数字，若不足二位则不补零; 如: "1" 至 "12"  
+M - 月份，三个英文字母; 如: "Jan"  
+s - 秒; 如: "00" 至 "59"  
+S - 字尾加英文序数，二个英文字母; 如: "th"，"nd"  
+t - 指定月份的天数; 如: "28" 至 "31"  
+U - 总秒数  
+w - 数字型的星期几，如: "0" (星期日) 至 "6" (星期六)  
+Y - 年，四位数字; 如: "1999"  
+y - 年，二位数字; 如: "99"  
+z - 一年中的第几天; 如: "0" 至 "365"  
+
+4.getdate(timestamp)
+
+返回一个根据 timestamp 得出的包含有日期信息的结合数组。如果没有给出时间戳，则认为是当前本地时间。
+"seconds" 秒的数字表示 0 到 59 
+"minutes" 分钟的数字表示 0 到 59 
+"hours" 小时的数字表示 0 到 23 
+"mday" 月份中第几天的数字表示 1 到 31 
+"wday" 星期中第几天的数字表示 0（表示星期天）到 6（表示星期六） 
+"mon" 月份的数字表示 1 到 12 
+"year" 4 位数字表示的完整年份 例如：1999 或 2003 
+"yday" 一年中第几天的数字表示 0 到 365 
+"weekday" 星期几的完整文本表示 Sunday 到 Saturday 
+"month" 月份的完整文本表示 January 到 December 
+0 自从 Unix 纪元开始至今的秒数，和 time() 的返回值以及用于 date() 的值类似。 系统相关，典型值为从 -2147483648 到 2147483647。 
+
+5.返回格林尼治标准时 参数和date一样 gmdate() 
+gmmktime() 和 mktime 一样
+
+idate idate() 只接受一个字符作为 format 参数。
+
+B Swatch Beat/Internet Time 
+d 月份中的第几天 
+h 小时（12 小时格式） 
+H 小时（24 小时格式） 
+i 分钟 
+I 如果启用夏时制则返回 1，否则返回 0 
+L 如果是闰年则返回 1，否则返回 0 
+m 月份的数字 
+s 秒数 
+t 本月的总天数 
+U 自 Unix 纪元（January 1 1970 00:00:00 GMT）起的秒数――这和 time() 作用相同 
+w 星期中的第几天（星期天是 0） 
+W ISO-8601 格式年份中的第几个星期，每星期从星期一开始 
+y 年份（1 或 2 位数字――见下面说明） 
+Y 年份（4 位数字） 
+z 年份中的第几天 
+Z 以秒为单位的时区偏移量 
+
+microtime(get_as_float) 返回当前时间的微妙数 若参数传递true 该函数将返回浮点数 
+
+strtotime 详解 first关键字  first 辅助关键字
+
+echo date("Y-m-d H:i:s", strtotime("first sunday",strtotime("2011-01-01")));
+
+previous 和 next 关键字
+
+echo date("Y-m-d H:i:s", strtotime("previous sunday",strtotime("2011-02-01")));
+
+last 关键字 既可以作为上一个 也可以作为最后一个
+echo date("Y-m-d H:i:s", strtotime("last sunday", strtotime("2011-02-05"))) 上一个星期天
+
+echo date("Y-m-d H:i:s", strtotime("last day", strtotime("2000-02-01"))) 求2月的最后一天
+
+back front 关键字
+
+date("Y-m-d H:i:s",strtotime("+1 day")
+am: the time is before noon　上午
+pm: the time is noon or later　下午
+year: one year; for example, “next year”　年，比如“next year”代表明年
+month: one month; for example, “last month”　月，比如“last month”代表上一月
+fortnight: two weeks; for example, “a fortnight ago”　两周，比如“a fortnight ago”代表两周前
+week: one week　周
+day: a day　天
+hour: an hour　小时
+minute: a minute　分钟
+min: same as minute　同“minute”
+second: a second 秒
+sec: same as second　同“second”
+
+
+
+ 

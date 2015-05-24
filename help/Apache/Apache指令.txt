@@ -1,0 +1,16 @@
+<IfDfine></IfDfine>            指令 封装一组只有在启动时当测试结果为真时才生效的指令
+<IfModule></IfModule>          封装指令并根据指定的模块是否启用为条件而决定是否进行处理
+Include       在服务器配置文件中包含其它配置文件 Include /usr/local/apache2/conf/ssl.conf
+TypesConfig   指定mime.types文件的位置
+LoadModule  加载目标文件或库 并将其添加到活动模块列表
+LoadFile    加载已命名的目标文件或库 区别于 可以加载module目录以外的文件
+
+指令作用域
+<Directory></Directory> 封装一组指令， 使之仅对文件空间中的某个目录及其子目录生效 不能在.htaccess 中
+<DirectoryMatch></DirectoryMatch> 封装一些指令并作用于文件系统中匹配正则表达式的所有目录及子目录 不能在.htaccess 中
+<Files></Files>包含作用于匹配指定文件名的指令 能在.htaccess 中
+<FilesMatch></FilesMatch> 包含作用于正则表达式匹配的文件名的指令 <FilesMatch "\.(gif|jpe?g|png)$"></FilesMatch>
+<Location></Location>   将封装的指令作用于匹配的URL
+<VirtualHost></VirtualHost> 包含仅作用于指定主机名或ip地址的指令
+AccessFileName 指令 分布式配置文件的名字 
+AllowOverride 指令 确定允许存在于.htaccess文件中的指令类型  仅允许存在于<Directory> 配置段中

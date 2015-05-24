@@ -1,0 +1,357 @@
+扩展 PHP 内置的异常处理类
+用户可以用自定义的异常处理类来扩展 PHP 内置的异常处理类。以下的代码说明了在内置的异常处理类中，哪些属性和方法在子类中是可访问和可继承的。译者注：以下这段代码只为说明内置异常处理类的结构，它并不是一段有实际意义的可用代码。 
+
+Example #1 内置的异常处理类
+
+<?php
+class Exception
+{
+    protected $message = 'Unknown exception';   // 异常信息
+    protected $code = 0;                        // 用户自定义异常代码
+    protected $file;                            // 发生异常的文件名
+    protected $line;                            // 发生异常的代码行号
+
+    function __construct($message = null, $code = 0);
+
+    final function getMessage();                // 返回异常信息
+    final function getCode();                   // 返回异常代码
+    final function getFile();                   // 返回发生异常的文件名
+    final function getLine();                   // 返回发生异常的代码行号
+    final function getTrace();                  // backtrace() 数组
+    final function getTraceAsString();          // 已格成化成字符串的 getTrace() 信息
+
+    /* 可重载的方法 */
+    function __toString();                       // 可输出的字符串
+}
+?> 
+如果使用自定义的类来扩展内置异常处理类，并且要重新定义构造函数的话，建议同时调用 parent::__construct() 来检查所有的变量是否已被赋值。当对象要输出字符串的时候，可以重载 __toString() 并自定义输出的样式。 
+
+Example #2 扩展 PHP 内置的异常处理类
+
+<?php
+/**
+ * 自定义一个异常处理类
+ */
+class MyException extends Exception
+{
+    // 重定义构造器使 message 变为必须被指定的属性
+    public function __construct($message, $code = 0) {
+        // 自定义的代码
+
+        // 确保所有变量都被正确赋值
+        parent::__construct($message, $code);
+    }
+
+    // 自定义字符串输出的样式
+    public function __toString() {
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    }
+
+    public function customFunction() {
+        echo "A Custom function for this type of exception\n";
+    }
+}
+
+
+/**
+ * 创建一个用于测试异常处理机制的类
+ */
+class TestException
+{
+    public $var;
+
+    const THROW_NONE    = 0;
+    const THROW_CUSTOM  = 1;
+    const THROW_DEFAULT = 2;
+
+    function __construct($avalue = self::THROW_NONE) {
+
+        switch ($avalue) {
+            case self::THROW_CUSTOM:
+                // 抛出自定义异常
+                throw new MyException('1 is an invalid parameter', 5);
+                break;
+
+            case self::THROW_DEFAULT:
+                // 抛出默认的异常
+                throw new Exception('2 isnt allowed as a parameter', 6);
+                break;
+
+            default:
+                // 没有异常的情况下，创建一个对象
+                $this->var = $avalue;
+                break;
+        }
+    }
+}
+
+
+// 例子 1
+try {
+    $o = new TestException(TestException::THROW_CUSTOM);
+} catch (MyException $e) {      // 捕获异常
+    echo "Caught my exception\n", $e;
+    $e->customFunction();
+} catch (Exception $e) {        // 被忽略
+    echo "Caught Default Exception\n", $e;
+}
+
+// 执行后续代码
+var_dump($o);
+echo "\n\n";
+
+
+// 例子 2
+try {
+    $o = new TestException(TestException::THROW_DEFAULT);
+} catch (MyException $e) {      // 不能匹配异常的种类，被忽略
+    echo "Caught my exception\n", $e;
+    $e->customFunction();
+} catch (Exception $e) {        // 捕获异常
+    echo "Caught Default Exception\n", $e;
+}
+
+// 执行后续代码
+var_dump($o);
+echo "\n\n";
+
+
+// 例子 3
+try {
+    $o = new TestException(TestException::THROW_CUSTOM);
+} catch (Exception $e) {        // 捕获异常
+    echo "Default Exception caught\n", $e;
+}
+
+// 执行后续代码
+var_dump($o);
+echo "\n\n";
+
+
+// 例子 4
+try {
+    $o = new TestException();
+} catch (Exception $e) {        // 没有异常，被忽略
+    echo "Default Exception caught\n", $e;
+}
+
+// 执行后续代码
+var_dump($o);
+echo "\n\n";
+?> 
+
+
+生成器 异常处理 
+--------------------------------------------------------------------------------
+[edit] Last updated: Fri, 05 Jul 2013 
+  
+  add a note User Contributed Notes 扩展 PHP 内置的异常处理类 - [6 notes] 
+up down 2 iamhiddensomewhere at gmail dot com ?
+3 years agoAs previously noted exception linking was recently added (and what a god-send it is, it certainly makes layer abstraction (and, by association, exception tracking) easier).
+
+Since <5.3 was lacking this useful feature I took some initiative and creating a custom exception class that all of my exceptions inherit from:
+
+<?php
+
+class SystemException extends Exception
+{
+    private $previous;
+    
+    public function __construct($message, $code = 0, Exception $previous = null)
+    {
+        parent::__construct($message, $code);
+        
+        if (!is_null($previous))
+        {
+            $this -> previous = $previous;
+        }
+    }
+    
+    public function getPrevious()
+    {
+        return $this -> previous;
+    }
+}
+
+?>
+
+Hope you find it useful. 
+up down 1 michaelrfairhurst at gmail dot com ?
+8 months agoCustom exception classes can allow you to write tests that prove your exceptions
+are meaningful. Usually testing exceptions, you either assert the message equals
+something in which case you can't change the message format without refactoring,
+or not make any assertions at all in which case you can get misleading messages
+later down the line. Especially if your $e->getMessage is something complicated
+like a var_dump'ed context array.
+
+The solution is to abstract the error information from the Exception class into
+properties that can be tested everywhere except the one test for your formatting.
+
+<?php
+
+class TestableException extends Exception {
+
+        private $property;
+
+        function __construct($property) {
+
+                $this->property = $property;
+                parent::__construct($this->format($property));
+
+        }
+
+        function format($property) {
+                return "I have formatted: " . $property . "!!";
+        }
+
+        function getProperty() {
+                return $this->property;
+        }
+
+}
+
+function testSomethingThrowsTestableException() {
+        try {
+                throw new TestableException('Property');
+        } Catch (TestableException $e) {
+                $this->assertEquals('Property', $e->getProperty());
+        }
+}
+
+function testExceptionFormattingOnlyOnce() {
+        $e = new TestableException;
+        $this->assertEquals('I have formatted: properly for the only required test!!',
+                $e->format('properly for the only required test')
+        );
+}
+
+?> 
+up down 0 Dor ?
+1 year agoIt's important to note that subclasses of the Exception class will be caught by the default Exception handler
+
+<?php
+    
+    /**
+     * NewException
+     * Extends the Exception class so that the $message parameter is now mendatory.
+     * 
+     */
+    class NewException extends Exception {
+        //$message is now not optional, just for the extension.
+        public function __construct($message, $code = 0, Exception $previous = null) {
+            parent::__construct($message, $code, $previous);
+        }
+    }
+    
+    /**
+     * TestException
+     * Tests and throws Exceptions.
+     */
+    class TestException {
+        const NONE = 0;
+        const NORMAL = 1;
+        const CUSTOM = 2;
+        public function __construct($type = self::NONE) {
+            switch ($type) {
+                case 1: 
+                    throw new Exception('Normal Exception');
+                    break;
+                case 2:
+                    throw new NewException('Custom Exception');
+                    break;
+                default:
+                    return 0; //No exception is thrown.
+            }
+        }
+    }
+    
+    try {
+        $t = new TestException(TestException::CUSTOM);
+    }
+    catch (Exception $e) {
+        print_r($e); //Exception Caught
+    }
+    
+?>
+
+Note that if an Exception is caught once, it won't be caught again (even for a more specific handler). 
+up down 0 sapphirepaw.org ?
+3 years agoSupport for exception linking was added in PHP 5.3.0. The getPrevious() method and the $previous argument to the constructor are not available on any built-in exceptions in older versions of PHP. 
+up down 0 paragdiwan at gmail dot com ?
+4 years agoI have written similar simple custom exception class. Helpful for newbie. 
+<?php 
+    /* 
+        This is written for overriding the exceptions. 
+        custom exception class 
+    */ 
+    error_reporting(E_ALL-E_NOTICE); 
+    class myCustomException extends Exception 
+    { 
+        
+        public function __construct($message, $code=0) 
+        { 
+            parent::__construct($message,$code); 
+        }    
+
+        public function __toString() 
+        { 
+            return "<b style='color:red'>".$this->message."</b>"; 
+        } 
+        
+        
+    } 
+
+    class testException 
+    { 
+        
+        public function __construct($x) 
+        { 
+        
+            $this->x=$x; 
+            
+        } 
+        
+        function see() 
+        { 
+            
+
+            if($this->x==9 ) 
+            { 
+                throw new myCustomException("i didnt like it"); 
+            } 
+        } 
+    } 
+
+    $obj = new testException(9); 
+    try{ 
+    
+        $obj->see(); 
+    } 
+    catch(myCustomException $e) 
+    { 
+        echo $e; 
+    } 
+?> 
+up down -1 joechrz at gmail dot com ?
+3 years agoIt's important to note some unexpected behavior when overriding the __toString method of an Exception.  The default PHP exception handler will truncate the result of the __toString method to the number of bytes specified by log_errors_max_len in php.ini.  
+
+To get around this problem, you need to either change the value of log_errors_max_len:
+
+<?php
+    // recommended: disable error logging
+    // so the log files don't become bloated from huge 
+    // exception strings
+    ini_set('log_errors','off');
+
+    // log_errors_max_len = infinite length
+    ini_set("log_errors_max_len",0);
+?>
+
+or specify a custom exception handler:
+<?php
+    function long_exception_handler($exception) {
+        // for compatibility, call __toString
+        echo $exception->__toString();
+    }
+    set_exception_handler('long_exception_handler');
+?> 

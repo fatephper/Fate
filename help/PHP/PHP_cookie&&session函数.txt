@@ -1,0 +1,43 @@
+cookie 函数
+
+/**
+* 设置cookie
+* name 名字 value 值 expire 生存时间 path 路径 domain域名
+*/
+setcookie(name,value,expire,path,domain) 
+在发送 cookie 时，cookie 的值会自动进行 URL 编码，在取回时进行自动解码（为防止 URL 编码，请使用 setrawcookie() 取而代之
+
+/**
+* 获取cookie
+*/
+isset($_COOKIE[name]);$_COOKIE[name];
+
+/**
+* 删除cookie
+*/
+setcookie('user','',time()-3600);
+
+session 函数
+
+/**
+* 启动 seesion 会话
+*/
+session_start() 
+
+/**
+* 设置 session
+*/
+$_SESSION['view'] = 'example';
+
+/**
+* 获取 session 
+*/
+echo $_SESSION['view'];
+
+/**
+* 删除 session
+*/
+unset($_SESSION['view']);
+
+session_destroy() 将重置 session，您将失去所有已存储的
+

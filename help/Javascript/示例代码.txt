@@ -1,0 +1,14 @@
+---------------------------------------------------------------
+form.js 示例代码 
+
+var FromObj = new Form('line_add');   其中line_add 为表单的name值
+FromObj.init
+({
+	'name':'<{$lineData.name}>',
+	'parent':'<{$lineData.parent_id}>',
+	'brief':'<{$lineData.brief}>',
+	'id':'<{$lineData.id}>'
+ });
+ ----------------------------------------------------------------
+ ajaxPages.js 示例代码
+$('#ajaxData').ajaxPages({url:url,page:1,listNum:30,contentId:'#personList tbody',pageId:'#pageNavContainer'});

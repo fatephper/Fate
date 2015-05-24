@@ -1,0 +1,2 @@
+<script src="yourpath/WdatePicker.js"></script>
+<input type="text" name="start_time"  onclick="WdatePicker()" style="width:118px;"/>

@@ -1,0 +1,10 @@
+$_SERVER['HTTP_X_FORWARDED_FOR'] $_SERVER['HTTP_CLIENT_IP'] $_SERVER['REMOTE_ADDR']
+
+php中$_SERVER参数HTTP_X_FORWARDED_FOR & REMOTE_ADDR与获取IP
+
+在PHP 中使用 $_SERVER["REMOTE_ADDR"] 来取得客户端的 IP 地址，但如果客户端是使用代理服务器来访问，那取到的就
+
+是代理服务器的 IP 地址，而不是真正的客户端 IP 地址。要想透过代理服务器取得客户端的真实 IP 地址，就要使用
+
+$_SERVER["HTTP_X_FORWARDED_FOR"] 来读取。
+

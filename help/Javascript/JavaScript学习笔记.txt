@@ -1,0 +1,17 @@
+javascript 组成部分 ECMAScript DOM BOM
+location.reload()    刷新当前页
+location.href = url  跳转页面
+<script> 元素定义了6个属性 async(立即下载脚本但不妨碍页面中的其他操作),charset(没什么用),defer(表示脚本可以延迟到文档完全被解析和显示之后在执行),language(已废弃),src,type(默认为text/javascript)  
+带有src属性的<script>元素不应该在其<script>和</script>标签之间再包含额外的javascript代码
+导入js文件一般都放在</body>标签之前
+<script src='1.js' defer='defer' async='async' ></script>
+保证让相同代码在XHTML中正常运行，用CData片段来包含javascript代码
+<script>
+//<![CDATA[
+	alert(123);
+//]]>
+</script>
+<noscript></noscript>元素可以指定在不支持脚本的浏览器中显示的替代内容,但在启用了脚本的情况下浏览器不会显示<noscript>元素中的任何内容
+
+（1）var n=Math.floor(Math.random()*m+1) //向下取整
+（2）var n=Math.ceil(Math.random()*m);     //向上取整

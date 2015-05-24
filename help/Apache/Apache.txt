@@ -1,0 +1,62 @@
+//杂项
+MIME类型就是设定某种扩展名的文件用一种应用程序来打开的方式类型
+指定站点根目录 DocumentRoot "D:/www"
+
+让Apache可以解析php文件，在配置文件中找到
+#LoadModule vhost_alias_module modules/mod_vhost_alias.so
+添加
+LoadModule php5_module "D:/Develop/PHP/php5apache2_2.dll"
+PHPIniDir "D:/Develop/PHP"
+AddType application/x-httpd-php .php .html .htm
+
+ServerRoot  用于指定守护进程httpd的运行目录 httpd在启动之后自动将进程的当前目录改变为这个目录 由于httpd会经常进行并发文件操作 就需要使用加锁的方式来保证文件操作不冲突 由于 NFS文件系统在文件加锁方面能力有限 因此这个目录应该是本地磁盘文件系统 而不应该是NFS文件系统
+
+PidFile /var/run/httpd.pid PidFile 指定的文件将记录httpd守护进程的进程号 由于httpd能自动复制其自身 因此系统中有多个httpd进程 但只有一个进程为最初启动的进程 为父进程 pidFile定义的文件就记录httpd父进程的进程号
+
+#httpd 使用ScoreBoardFile来维护进程的内部数据 因此通常不需要改变这个参数 除非管理员想在一台计算机上运行几个apache服务器 这时每个Apache服务器都需要独立的设置文件
+
+<IfModule mpm_worker_module>
+    StartServers          5  httpd启动时子进程的数量
+    MaxClients          150  最大的客户端并发请求数 限制了 min 和 max
+    MinSpareThreads      25  系统中的空余子进程 等待处理请求 限制了 StartServers 应在min 和max 之间
+    MaxSpareThreads      75  系统中子进程最大数 
+    ThreadsPerChild      25  每个子进程生成的最多线程
+    MaxRequestsPerChild   1000 每个子进程 最大处理请求次数 请求过多会造成内存垃圾
+</IfModule>
+
+mpm 多块录用模块 multi processing module 
+
+maxclients 影响apache最大的参数 如果设置太小 会发现系统资源富裕 但是http访问很慢 apache默认限制不能大于256 大于256 apache将不启动
+
+建立 .htaccess 文件 方法为建立一个文件另存为文件名为.htaccess 
+
+apache 中 FollowSymLinks 的作用 允许访问站点根目录外的文档 
+
+如在linux 下访问站点根目录下的一个软链接 就能访问到真实文件
+
+禁止列出目录下的文件列表 OPtions -Indexes +代表允许 -代表禁止
+
+// 模块 指令 
+
+mod_mime 
+根据文件扩展名决定应答行为 模块名字 mime_module 源文件 mod_mime.c
+指令 
+AddCharset 在给定的文件扩展名与特定的字符集之间建立映射 例如 AddCharset EUC-JP .euc
+AddEncoding 在文件扩展名与特定的编码方式之间建立映射关系 例如 AddEncoding x-gizp .gz
+AddHandler  在文件扩展名与特定的处理器之间建立映射       例如 AddHandler cgi-script .cgi
+AddInputFilter 在文件扩展名与特定的输入过滤器之间建立映射  
+AddLanguage 在文件扩展名与特定的语言之间建立映射        例如 AddLanguage en-us .en
+AddOutFilter 在文件扩展名与特定的输出过滤器之间建立映射关系  例如 AddOutputFilter INCLUDES; DEFLATE shtml
+AddType      在给定的文件扩展名与特定的内容类型之间建立映射  例如 AddType image/gif .gif
+DefaultLanguage 为所有文件设定特定的默认语言                 DefaultLanguage en
+ModMineUsePathinfo 将path_info 当成是文件名的一个组成部分    Off  
+MultiviewsMatch    查询所匹配的文件时要包含的文件类型
+RemoveCharset      删除任何给定的扩展名与内容字符集之间的联系  RemoveCharset .html .shtml
+RemoveEncoding     删除任何给定的扩展名与内容编码方式之间的关联 
+例子 
+/foo/.htaccess  
+<Files *.gz.asc>
+	RemoveEncoding .gz #RemoveEncoding 优先级 大于 AddEncoding  RemoveType 优先级大于AddType
+</Files>
+RemoveHandler      删除任何指定扩展名与处理器之间的关联 
+

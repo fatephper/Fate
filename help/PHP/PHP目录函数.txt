@@ -1,0 +1,41 @@
+chdir(dir) 改变当前的目录。 成功返回true 失败返回 false
+chroot() 改变当前进程的根目录。 若成功，则该函数返回 true，否则返回 false。 windows 未实现
+dir() 函数打开一个目录句柄，并返回一个对象。这个对象包含三个方法：read() , rewind() 以及 close()。
+若成功，则该函数返回一个目录流，否则返回 false 以及一个 error。可以通过在函数名前加上 "@" 来隐藏 error 的输出。
+$dir = dir("images");
+while (($file = $dir->read()) !== false)
+{
+  echo "filename: " . $file . "<br />";
+}
+$dir->close();
+
+closedir() 函数关闭由 opendir() 函数打开的目录句柄。
+
+$dir = opendir("images");
+
+//列出 images 目录中的文件
+while (($file = readdir($dir)) !== false)
+  {
+  echo "filename: " . $file . "<br />";
+  }
+closedir($dir);
+  
+getcwd() 返回当前目录。
+opendir(path,context) 函数打开一个目录句柄，可由 closedir()，readdir() 和 rewinddir() 使用。
+若成功，则该函数返回一个目录流，否则返回 false 以及一个 error。可以通过在函数名前加上 "@" 来隐藏 error 的输出。
+readdir() 函数返回由 opendir() 打开的目录句柄中的条目。
+若成功，则该函数返回一个文件名，否则返回 false。
+rewinddir() 函数重置由 opendir() 打开的目录句柄。
+本函数什么都不会返回。
+rewinddir(dir_stream)
+scandir() 函数返回一个数组，其中包含指定路径中的文件和目录。
+若成功，则返回一个数组，若失败，则返回 false。如果 directory 不是目录，则返回布尔值 false 并生成一条 E_WARNING 级的错误。
+scandir(directory,sort,context)参数 描述 
+directory 必需。规定要扫描的目录。 
+sort 可选。规定排列顺序。默认是 0 （升序）。如果是 1，则为降序。 
+context 可选。规定目录句柄的环境。context 是可修改目录流的行为的一套选项。 
+
+DIRECTORY_SEPARATOR   3 
+PATH_SEPARATOR 
+
+ 

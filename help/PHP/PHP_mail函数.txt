@@ -1,0 +1,7 @@
+mail() 函数 
+
+/**
+* 发送电子邮件
+* to email接收者 subject主题 message消息
+*/
+mail(to,subject,message,headers,parameters)

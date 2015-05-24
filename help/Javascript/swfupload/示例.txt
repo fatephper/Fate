@@ -1,0 +1,45 @@
+<script src="handler.js"></script>
+<script src='swfupload.js'></script>
+<script src='swfupload.queque.js'></script>
+
+保证swfupload.swf 和 js文件在同一文件夹下 或者自己修改配置文件
+
+在html 中加入
+
+
+var swfu;
+window.onload = function () {
+	swfu = new SWFUpload({
+		// Backend Settings
+		upload_url: "{url:/block/article_img_upload}",
+		post_params: {"PHPSESSID": "NONE"},
+
+		file_size_limit : "2 MB",	// 2MB
+		file_types : "*.jpg;*.jpge;*.png;*.gif",
+		file_types_description : "JPG Images",
+		file_upload_limit : "0",
+		file_queue_error_handler : fileQueueError,
+		file_dialog_complete_handler : fileDialogComplete,
+		upload_progress_handler : uploadProgress,
+		upload_error_handler : uploadError,
+		upload_success_handler : uploadSuccess,
+		upload_complete_handler : uploadComplete,
+
+		// Button Settings
+		button_placeholder_id : "upload",
+		button_width: 50,
+		button_height: 21,
+		button_text : '浏览...',
+		button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
+		button_cursor: SWFUpload.CURSOR.HAND,
+
+		// Flash Settings
+		flash_url : "{theme:javascript/swfupload.swf}",
+
+		custom_settings : {
+			upload_target : "show"
+		},
+		// Debug Settings
+		debug: false
+	});
+};

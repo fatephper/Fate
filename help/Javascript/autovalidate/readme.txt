@@ -1,0 +1,1 @@
+					<td><input type='text' name='title' class='normal' value='' pattern='required' onblur="checkTitle();" alt='标题不能为空' /><label id='unique'></label></td>

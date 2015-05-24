@@ -1,0 +1,46 @@
+$_SERVER['PHP_SELF']    相对于站点根目录 若脚本名字后面还有 /123xxx 则返回 index.php/123xxx  会执行一次 urldecode 对url编码进行一次解析
+
+$_SERVER['SCRIPT_NAME'] 相对站点根目录 返回脚本的相对路径  /Magic/index.php
+
+$_SERVER['DOCUMENT_URI'] Nginx 有该全局变量
+
+__FILE__ 绝对路径 若是包含路径 则包含路径
+
+E:\wamp\www\Magic\Magic\error.php
+
+$_SERVER['SCRIPT_FILENAME'] 绝对路径 当前脚本 不包含路径
+
+E:/wamp/www/Magic/index.php
+
+$_SERVER['QUERY_STRING'] ?后面的值
+
+$_SERVER['REQUEST_URI'] 去掉域名以后的一部分URI
+
+$_SERVER['PATH_INFO'] 跟在真实脚本名称之后 并且在查询语句之前的路径信息
+
+http://www.test.com/index.php/foo/bar.html?c=index&m=search
+
+$_SERVER['PATH_INFO']    ＝ ‘/foo/bar.html’
+
+$_SERVER['QUERY_STRING']  =  'c=index&m=search';
+
+parse_url() 解析 URL，返回其组成部分 
+
+array(2) { ["scheme"]=> string(1) "E" ["path"]=> string(25) "\wamp\www\Magic\index.php" }
+
+pathinfo()  dirname basename extension filename
+
+array(4) { ["dirname"]=> string(17) "E:\wamp\www\Magic" ["basename"]=> string(9) "index.php" ["extension"]=> string(3) "php" ["filename"]=> string(5) "index" }
+
+parse_str() 把查询字符串解析到变量中 
+
+parse_str("id=23&name=John%20Adams");
+echo $id."<br />";
+echo $name;
+
+extract()   将数组展开将键名作为变量名 元素值为变量值
+
+$a = 'Original';
+$my_array = array("a" => "Cat","b" => "Dog", "c" => "Horse");
+extract($my_array);
+echo "\$a = $a; \$b = $b; \$c = $c";

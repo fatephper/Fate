@@ -1,0 +1,22 @@
+chkconfig --list 列出系统所有服务名称
+chkconfig -–add httpd              增加httpd服务
+chkconfig -–del httpd              删除httpd服务
+chkconfig -–level httpd 2345 on    把httpd在运行级别为2、3、4、5的情况下都是on（开启）的状态。
+添加httpd服务
+把cp /usr/local/apache/bin/apachectl /etc/rc.d/init.d/httpd
+vi /etc/rc.d/init.d/httpd/
+添加下面两行
+#chkconfig: 345 85 15
+#description: Activates/Deactivates Apache Web Server
+Apache加入启动项里面：
+echo '/usr/local/apache2/bin/apachectl start ' >> /etc/rc.local
+添加mysqld服务
+cp /usr/local/mysql/share/mysql/mysql.server /etc/init.d/mysqld
+chkconfig --add mysqld #将mysql加到启动服务列表里
+chkconfig mysqld on #让系统启动时自动打开mysql服务
+
+添加ftp账户 
+
+useradd -d yourdir yourname  tip:  yourdir指定 ftp目录 yourname 指定ftp用户名
+passwd yourname  设定ftp密码
+把ftp用户固定在宿主 目录 chroot_local_user 设置为yes  /etc/vsftpd.conf

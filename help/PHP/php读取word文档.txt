@@ -1,0 +1,43 @@
+<? 
+必须将 php.ini 中的 com.allow_dcom 设为 TRUE
+// 建立一个指向新COM组件的索引 
+$word = new COM(”word.application”) or die(”Can't start Word!”); 
+// 显示目前正在使用的Word的版本号 
+//echo “Loading Word, v. {$word->Version}<br>”; 
+// 把它的可见性设置为0（假），如果要使它在最前端打开，使用1（真） 
+// to open the application in the forefront, use 1 (true) 
+//$word->Visible = 0; 
+
+//打?一个文档 
+$word->Documents->OPen(”d:\myweb\muban.doc”); 
+//读取文档内容 
+
+$test= $word->ActiveDocument->content->Text; 
+
+echo $test; 
+echo “<br>”; 
+//将文档中需要换的变量更换一下 
+$test=str_replace(”<{变量}>”,”这是变量”,$test); 
+echo $test; 
+$word->Documents->Add(); 
+// 在新文档中添加文字 
+$word->Selection->TypeText(”$test”); 
+//把文档保存在目录中 
+$word->Documents[1]->SaveAs(”d:/myweb/comtest.doc”); 
+// 关闭与COM组件之间的连接 
+$word->Quit(); 
+?> 
+
+<?php  
+header( "Pragma: public" );  
+header( "Expires: 0" ); // set expiration time  
+header( "Cache-Component: must-revalidate, post-check=0, pre-check=0" );  
+header( "Content-type:application/msword");  
+//header( "Content-Length: " . filesize( $this->filename ) );  
+if(strpos(<pre class="php" name="code">{1}</pre><br>  
+SERVER['HTTP_USER_AGENT'],"MSIE"))header( 'Content-Disposition: attachment; filename="'.urlencode("php生成word文档.doc").'"' );//如果是ie存为的名字要urlencodeelse header( 'Content-Disposition: attachment; filename="'.'php生成word文档.doc'.'"' );//存为的名字header( 'Content-Transfer-Encoding:  
+ binary' );$out_put=<<<o<html xmlns:v="urn:schemas-microsoft-com:vml"xmlns:o="urn:schemas-microsoft-com:office:office"xmlns:w="urn:schemas-microsoft-com:office:word"xmlns="http://www.w3.org/TR/REC-html40"><head><meta http-equiv=Content-Type content="text/html;  
+ charset=utf-8"><meta name=ProgId content=Word.Document><meta name=Generator content="Microsoft Word 11"><meta name=Originator content="Microsoft Word 11"><xml><w:WordDocument><w:View>Print</w:View></xml></head><body>{replacement}这里是你要呈现的内容</body></html>o;echo  
+ $out_put;?> 
+ 
+ flexpaper 实现在线预览
