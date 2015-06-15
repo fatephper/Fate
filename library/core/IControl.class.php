@@ -102,6 +102,15 @@
                  
                   return $this->model;
              }
+             
+             /**
+              * @brief 跳转函数
+              * @param type $url
+              */
+             public function redirect($url){
+                 
+                 Fate::app()->url->redirect($url);
+             }
 
   }
 			

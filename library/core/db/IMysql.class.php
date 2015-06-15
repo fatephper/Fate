@@ -128,6 +128,7 @@
                     }
                     $str=rtrim($str,',');
                     $sql = "UPDATE `$tbName` SET $str WHERE $where";
+                    //echo $sql;exit;
                     return $this->query($sql);
               }
 

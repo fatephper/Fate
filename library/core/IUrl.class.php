@@ -90,7 +90,6 @@
                 case 'pathinfo':	 //PATHINFO模式
 
                     $uri = $this->getRealSelf();
-        
                     preg_match('/\.php\/(.*)/',$uri,$matchAll);
                      
                      foreach($this->partterns as $i=>$parttern)
@@ -106,37 +105,36 @@
                           $parttern = $parttern.$case;
                           if(preg_match($parttern,$pathInfo,$matches))
                           {     
-                                
                                 $_GET = array_merge($params,$_GET);
                                 $_REQUEST = array_merge($params,$_REQUEST);
                                 $temp=array();
- 
                                 foreach($matches as $key=>$value)   
-                                {    $temp["<".$key.">"] = $value;
-                                     $_REQUEST[$key]=$_GET[$key]=$value;
+                                {   
+                                    if(in_array('<'.$key.'>',($this->tags[$i]))){
+                                        $temp["<".$key.">"] = $value;
+                                        $_REQUEST[$key]=$_GET[$key]=$value;
+                                     }
                                 }
                                 
                                 if(rtrim($pathInfo,'/')!==rtrim($matches[0],'/')){
-                                    
                                        $this->pathinfoToArray(ltrim(substr($pathInfo,strlen($matches[0])),'/'));
                                 }
                                 
-                                $pathInfo = strtr($this->routes[$i],$temp);
+                                $route_url = strtr($this->routes[$i],$temp);
                                 break;
-                            }
+                           }
 
-                        }
+                      }
+                      if(!isset($route_url) && !empty($pathInfo))
+                          $this->pathinfoToArray($pathInfo);
+                break;
 
-                        return $pathInfo;
+                case 'diy': 
 
-                    break;
+                    return null; 	
+                break;
 
-                    case 'diy': 
-
-                        return null; 	
-                    break;
-
-                  }
+                }
            }
            
            /**
@@ -277,9 +275,36 @@
                 $_GET = array_merge($_GET,$re);
                 $_REQUEST = array_merge($_REQUEST,$re);
 
-             }
-           
-           
+            }
+            
+            /**
+             * @brief 生成站点内URL
+             * @param URL参数
+             */
+            public function createUrl(){
+                
+            }
+             
+            /**
+             * @brief 跳转函数
+             * @param url  跳转路径
+             * @param code HTTP状态码
+             */
+            public function redirect($url,$code=302){
+                
+                if(is_array($url)){
+                    
+                    $url = array(); //待补充
+                    
+                }else{
+                    if(strpos($url,'/')===0){
+                        $url = $this->getHost().$url;
+                    }
+                } 
+                
+                header("Location:".$url,true,$code);
+            }
+         
     }
 
 ?>

@@ -121,10 +121,32 @@
              * @brief 异常处理句柄
              **/
             public function exceptionHandler($e){
+                
+                //处理FatePHP 自定义异常
+                if(($this->debug && $e instanceof IException) || $e instanceof IHttpException ){ 
 
-                    if($this->debug || $e instanceof IHttpException ){
-                      $e->display();
+                    $e->display();
+
+                }else{ //处理未捕获的异常
+                    $debugData = $e->getTrace();
+                    $re = "\n\n\n<div style='width:100%;border:1px #000 solid;'>\n<pre>";
+                    $re .= sprintf("\t<b>Mess</b>: %s\n",$e->getMessage());
+                    $re .= sprintf("\t<b>Line</b>: %s\n",$e->getLine());
+                    $re .= sprintf("\t<b>File</b>: %s\n",$e->getFile());
+                    $re .= sprintf("\t<b>##Debug_backtrace:##</b>\n");
+                    foreach($debugData as $value)
+                    {
+
+                     $re .= sprintf("\t<b>File</b>:%-70s\t<b>Line</b>:%-5s\t<b>Type</b>:%-5s\t<b>Class</b>:%-15s\t<b>Func</b>:%s\n" ,
+                                    isset($value['file'])?$value['file']: "" ,
+                                    isset($value['line'])?$value['line']:"",
+                                    isset($value['type'])?$value['type']:"",
+                                    isset($value['class'])?$value['class']:"",
+                                    $value['function'] );
                     }
+                    $re .= "</pre></div>";
+                    exit($re);
+                }
             }
             
             /**
@@ -148,19 +170,15 @@
              **/
             private function execRequest(){
                                                           
-                $url_route = $this->url->parseUrlRules()->parseUrl();
-                $info = explode('/',trim($url_route,'/'));
-                if(!empty($info[0]) && !empty($url_route)){
-                    if($this->isModule($info[0])){
-                        $this->module  = $info[0];
-                        $this->control = !empty($info[1])? $info[1]:$this->control;
-                        $this->action  = !empty($info[2])? $info[2]:$this->action; 
-                    }else{
-                        
-                        $this->control = $info[0];
-                        $this->action  = !empty($info[1])? $info[1]:$this->action; 
-                    }
+                $this->url->parseUrlRules()->parseUrl();
+                if(empty($_GET['module']) && isset($_GET['control']) && $this->isModule($_GET['control'])){
+                    $_GET['module'] = $_GET['control'];
+                    $_GET['control'] = $_GET['action'];
+                    unset($_GET['action']);
                 }
+                $this->module  = !empty($_GET['module']) ? $_GET['module'] :$this->module;
+                $this->control = !empty($_GET['control'])? $_GET['control']:$this->control;
+                $this->action  = !empty($_GET['action']) ? $_GET['action'] :$this->action; 
             }
 					
             /**
@@ -170,13 +188,16 @@
                $this->execRequest();
                $action  = $this->action; 
                $controlFile = $this->controlPath.$this->module.'/'.$this->control.'Control.class.php';
-               if(is_file($controlFile) && ($control = $this->control($this->control)) && method_exists($control,$action))               {              
+               if(is_file($controlFile) && ($control = $this->control($this->control)) && method_exists($control,$action)){         
                       $control->beginAction();
                       call_user_func(array($control,$action));
                       $control->endAction(); 	 	
                }else{
-                    if(!$this->debug)
+                    if(!$this->debug){
                       throw new IHttpException('404 not found!',404);
+                    }else{
+                      throw new IException($controlFile." 不存在".$this->action.'方法');
+                    }
                }   
             }
 									  
@@ -209,8 +230,9 @@
              * @brief 获取应用中的模型 
              * @param $name   模型名称
              * @param $module 模块
+             * @param $obj    是否返回模型对象
              **/
-            public function model($name,$module=''){
+            public function model($name,$module='',$obj=true){
                    
                    $name = $name.'Model';
                    
@@ -226,23 +248,26 @@
                         }
                         $flag = Fate::import( $this->modelPath.$module.'/'.$name,false);
                    }
-
-                    return $flag? new $name:false;
+                   
+                   return ($obj&&$flag)? new $name:$flag;
             }
             
             /**
              * @brief 获取应用中的控制器
-             * @param $name 控制器名称
+             * @param $name   控制器名称
              * @param $module 模块名称
+             * @param $obj    是否返回控制器对象
              **/
-            public function control($name,$module=''){
+            public function control($name,$module='',$obj=true){
                 	
                    $name = $name.'Control';
                    
                    if($module === false){
                        
-                        Fate::import( $this->controlPath.$name,true);
+                        $flag = Fate::import( $this->controlPath.$name,true);
+                        
                    }else{
+                       
                         if(!empty($module)){
                             if(!$this->isModule($module))
                                 throw new IException("$module is not an module in this application !");
@@ -250,11 +275,10 @@
                             $module = $this->module;
                         }
 												
-                        Fate::import( $this->controlPath.$module.'/'.$name,true);
+                        $flag = Fate::import( $this->controlPath.$module.'/'.$name,true);
            
                    }
-                   
-                   return new $name;
+                   return ($obj&&$flag)? new $name:$flag;
             }
             
             /**
